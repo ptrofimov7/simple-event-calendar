@@ -15,12 +15,6 @@ export const range = (end: number) => {
   return result;
 };
 
-export const sortDays = (date: Date) => {
-  const dayIndex = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  const sortedDays = [...DAYS.slice(dayIndex), ...DAYS.slice(0, dayIndex)];
-  return sortedDays;
-};
-
 export const datesAreOnSameDay = (first: Date, second: Date) =>
   first.getFullYear() === second.getFullYear() &&
   first.getMonth() === second.getMonth() &&

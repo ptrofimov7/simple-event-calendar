@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   height: 99vh;
 `;
 
-export const StyledEvent = styled.span`
+export const StyledTask = styled.span`
   background: ${({ bgColor }) => bgColor};
   color: white;
   text-align: left !important;
@@ -20,17 +20,17 @@ export const StyledEvent = styled.span`
 export const SevenColGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  ${(props) => props.fullheight && `height: calc(100% - 75px);`}
+  ${(props) => props.fullheight && `height: calc(100% - 115px);`}
   ${(props) =>
-    props.fullheight &&
-    `grid-template-rows: repeat(${props.is28Days ? 4 : 5}, 1fr);`}
+      props.fullheight &&
+      `grid-template-rows: repeat(${props.rows}, 1fr);`}
   div {
     display: grid;
     border: 1px solid;
-    ${StyledEvent} {
+    ${StyledTask} {
       display: none;
     }
-    ${StyledEvent}:nth-child(-n + 3) {
+    ${StyledTask}:nth-child(-n + 3) {
       display: block;
     }
 
@@ -81,7 +81,7 @@ export const SeeMore = styled.p`
   cursor: pointer;
 `;
 
-export const PortalWrapper = styled.div`
+export const ModalWrapper = styled.div`
   background: white;
   position: absolute;
   width: 60%;
