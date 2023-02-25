@@ -1,41 +1,17 @@
 import { datesAreOnSameDay } from '../../helpers';
 
-const CalendarDay = ({ currentDate, day, onDragEnter, addTask, onDragEnd, children }: any) => {
+const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: any) => {
+   const day = date.getDate() || ''
    return (
       <div
-         id={`${currentDate.getFullYear()}/${currentDate.getMonth()}/${day}`}
-         onDragEnter={(e) =>
-            onDragEnter(
-               new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-               ),
-               e
-            )
-         }
+         id={id}
+         onDragEnter={(e) => onDragEnter(date, e)}
          onDragOver={(e) => e.preventDefault()}
          onDragEnd={onDragEnd}
-         onClick={(e) =>
-            addTask(
-               new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-               ),
-               e
-            )
-         }
+         onClick={(e) =>  addTask(date, e )}
       >
          <span
-            className={`nonDRAG ${datesAreOnSameDay(
-               new Date(),
-               new Date(
-                  currentDate.getFullYear(),
-                  currentDate.getMonth(),
-                  day
-               )
-            )
+            className={`nonDRAG ${datesAreOnSameDay( new Date(), date )
                ? "active"
                : ""
                }`}

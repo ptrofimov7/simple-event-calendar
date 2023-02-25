@@ -18,6 +18,7 @@ import CalendarDay from "./CalendarDay";
 import CalendarHeader from "./CalendarHeader";
 import TaskModal from "./TaskModal";
 import CalendarActions from "./CalendarActions";
+import Holidays from "./Holidays";
 
 export default function Calendar() {
    const [currentDate, setCurrentDate] = useState(new Date(2022, 9, 1));
@@ -26,6 +27,7 @@ export default function Calendar() {
    const dragindexRef = useRef<any>();
    const [showModal, setShowModal] = useState(false);
    const [modalData, setModalData] = useState<ITask>({} as ITask);
+   const [search, setSearch] = useState('')
 
    const addTask = (date: Date, e: any) => {
       if (!e.target.classList.contains("StyledTask")) {
@@ -42,29 +44,43 @@ export default function Calendar() {
       }
    };
 
-   const drag = (index: number, e: any) => {
-      dragindexRef.current = { index, target: e.target };
+   const drag = (index: number, date: Date, e: any) => {
+      dragindexRef.current = { index, date, target: e.target };
    };
 
    const onDragEnter = (date: Date, e: any) => {
       e.preventDefault();
+      e.stopPropagation()
       dragDateRef.current = { date, target: e.target.id };
+   };
+
+   const onDragEnterSameDate = (index: number, date: Date, e: any) => {
+      e.preventDefault();
+      e.stopPropagation()
+      dragDateRef.current = { index, date, target: e.target.id };
    };
 
    const drop = (e: any) => {
       e.preventDefault();
-
-      setTasks((prev) =>
-         prev.map((task, index) => {
-            if (index === dragindexRef.current.index) {
-               task.date = dragDateRef.current.date;
-            }
-            return task;
-         })
-      );
+      e.stopPropagation()
+      const IsSameDate = dragDateRef.current.date === dragindexRef.current.date
+      setTasks((prev) => {
+         let taskFrom = prev[dragindexRef.current.index]
+         if (!taskFrom) return prev
+         if (IsSameDate) {
+            const list = [...prev]
+            list.splice(dragindexRef.current.index, 1)
+            list.splice(dragDateRef.current.index, 0, taskFrom)
+            return list
+         }
+         const list = [...prev]
+         list.splice(dragindexRef.current.index, 1)
+         list.splice(0, 0, { ...taskFrom, date: dragDateRef.current.date })
+         return list
+      });
    };
 
-   const handleOnClickEvent = (task: any) => {
+   const handleOnClickTask = (task: any) => {
       setShowModal(true);
       setModalData(task);
    };
@@ -86,9 +102,9 @@ export default function Calendar() {
       const date = new Date(currentDate)
       nextMonth(date, setCurrentDate)
    }
-
    const sortedDays = getSortedDays(currentDate)
-   console.log({sortedDays});
+   const filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
+   console.log({ sortedDays });
 
    return (
       <Wrapper>
@@ -96,7 +112,7 @@ export default function Calendar() {
             currentDate={currentDate} handleClickPrevMonth={handleClickPrevMonth}
             handleClickNextMonth={handleClickNextMonth}
          />
-         <CalendarActions />
+         <CalendarActions search={search} onSearch={setSearch} />
          <SevenColGrid>
             {DAYS.map((day) => (
                <HeadDays key={day} className="nonDRAG">{day}</HeadDays>
@@ -107,22 +123,29 @@ export default function Calendar() {
             is28Days={getDaysInMonth(currentDate) === 28}
             rows={Math.ceil(sortedDays.length / 7)}
          >
-            {sortedDays.map((day, index) => (
-               <CalendarDay
-                  key={`${currentDate.getFullYear()}/${currentDate.getMonth()}/${day}/${index}`}
-                  currentDate={currentDate}
-                  day={day}
-                  onDragEnter={onDragEnter}
-                  addTask={addTask}
-                  onDragEnd={drop}>
-                  <Tasks tasks={tasks}
-                     currentDate={currentDate}
-                     day={day}
-                     onDrag={drag}
-                     onClick={handleOnClickEvent}
-                  />
-               </CalendarDay>
-            ))}
+            {sortedDays.map((day, index) => {
+               const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+               const id = `${currentDate.getFullYear()}/${currentDate.getMonth()}/${day}/${index}`
+               return (
+                  <CalendarDay
+                     key={id}
+                     id={id}
+                     date={date}
+                     onDragEnter={onDragEnter}
+                     addTask={addTask}
+                     onDragEnd={drop}>
+                     <Tasks
+                        tasks={filteredTasks}
+                        date={date}
+                        onDrag={drag}
+                        onDragEnter={onDragEnterSameDate}
+                        onDragEnd={drop}
+                        onClick={handleOnClickTask}
+                     />
+                     <Holidays date={date} data={[]}/>
+                  </CalendarDay>
+               )
+            })}
          </SevenColGrid>
          {showModal && (
             <TaskModal

@@ -1,9 +1,19 @@
-import React from 'react';
+import { TextField } from '@mui/material';
 
-const CalendarActions = () => {
+const CalendarActions = ({ search, onSearch }: any) => {
    return (
       <div>
-         CalendarActions
+         <TextField
+          id="filled-search"
+          label="Search field"
+          type="search"
+          variant="filled"
+          value={search}
+          onChange={(e) => {
+            onSearch(e.target.value)
+         }
+      }
+        />
       </div>
    );
 };
