@@ -19,6 +19,8 @@ import CalendarHeader from "./CalendarHeader";
 import TaskModal from "./TaskModal";
 import CalendarActions from "./CalendarActions";
 import Holidays from "./Holidays";
+import { useQuery } from "react-query";
+import fetchHolidays from "./api/fetchHolidays";
 
 export default function Calendar() {
    const [currentDate, setCurrentDate] = useState(new Date(2022, 9, 1));
@@ -28,6 +30,8 @@ export default function Calendar() {
    const [showModal, setShowModal] = useState(false);
    const [modalData, setModalData] = useState<ITask>({} as ITask);
    const [search, setSearch] = useState('')
+   const currentYear = currentDate.getFullYear()
+   const {data: holidays, isError, isLoading} = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
 
    const addTask = (date: Date, e: any) => {
       if (!e.target.classList.contains("StyledTask")) {
@@ -104,7 +108,14 @@ export default function Calendar() {
    }
    const sortedDays = getSortedDays(currentDate)
    const filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
-   console.log({ sortedDays });
+
+   if (isLoading) {
+      return <div>Loading ...</div>
+   }
+
+   if (isError) {
+      return <div>Something went wrong</div>
+   }
 
    return (
       <Wrapper>
@@ -142,7 +153,7 @@ export default function Calendar() {
                         onDragEnd={drop}
                         onClick={handleOnClickTask}
                      />
-                     <Holidays date={date} data={[]}/>
+                     <Holidays date={date} data={holidays}/>
                   </CalendarDay>
                )
             })}

@@ -15,10 +15,20 @@ export const range = (end: number) => {
   return result;
 };
 
-export const datesAreOnSameDay = (first: Date, second: Date) =>
-  first.getFullYear() === second.getFullYear() &&
-  first.getMonth() === second.getMonth() &&
-  first.getDate() === second.getDate();
+export const datesAreOnSameDay = (first: Date | string, second: Date | string) => {
+   let firstDate = first;
+   let secondDate = second;
+   if (typeof(firstDate) === 'string') {
+      firstDate = new Date(firstDate)
+   }
+   if (typeof(secondDate) === 'string') {
+      secondDate = new Date(secondDate)
+   }
+   return firstDate.getFullYear() === secondDate.getFullYear() &&
+   firstDate.getMonth() === secondDate.getMonth() &&
+   firstDate.getDate() === secondDate.getDate();
+}
+
 
 export const getMonthYear = (date: Date) => {
   const d = date.toDateString().split(" ");
