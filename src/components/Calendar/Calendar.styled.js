@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  border: 1px solid;
-  height: 99vh;
+  /* border: 1px solid; */
+  /* height: 99vh; */
 `;
 
-export const StyledTask = styled.span`
+export const StyledTask = styled.div`
   background: ${({ bgColor }) => bgColor};
   color: white;
   text-align: left !important;
@@ -33,13 +33,14 @@ export const StyledHoliday = styled.span`
 export const SevenColGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  ${(props) => props.fullheight && `height: calc(100% - 115px);`}
+  ${(props) => props.fullheight && `height: calc(100% - 136px);`}
   ${(props) =>
       props.fullheight &&
       `grid-template-rows: repeat(${props.rows}, 1fr);`}
   div {
     display: grid;
     border: 1px solid;
+    position: relative;
     ${StyledTask} {
       display: none;
     }
@@ -47,9 +48,25 @@ export const SevenColGrid = styled.div`
       display: block;
     }
 
+    button[aria-label="add task"] {
+      display: none;
+    }
+
+    &:hover {
+      button[aria-label="add task"] {
+      display: revert;
+      z-index: 100;
+      background: olive;
+      color: black;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+
     span {
-      text-align: right;
-      padding-right: 15px;
+      text-align: center;
+      padding-inline: 15px;
       height: fit-content;
     }
 
@@ -70,21 +87,17 @@ export const HeadDays = styled.span`
   border: 1px solid;
   height: 30px;
   padding: 5px;
-  background: darkolivegreen;
+  background: rgba(0 0 0/0.7);
   color: white;
 `;
 
 export const DateControls = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 50px;
   padding: 10px 0;
   align-items: center;
-
-  ion-icon {
-    font-size: 1.6rem;
-    cursor: pointer;
-  }
 `;
 
 export const SeeMore = styled.p`
@@ -97,33 +110,26 @@ export const SeeMore = styled.p`
 export const ModalWrapper = styled.div`
   background: white;
   position: absolute;
-  width: 60%;
-  height: 200px;
+  width: 45%;
   top: 50%;
   left: 50%;
-  /* border: 1px solid; */
   border-radius: 6px;
   transform: translate(-50%, -50%);
   box-shadow: 10px 10px 20px black;
-  padding: 40px;
+  padding: 55px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
   h2 {
     font-size: 3rem;
-  }
-
-  ion-icon {
-    font-size: 2rem;
-    color: red;
-    background: lightblue;
-    padding: 10px 20px;
-    border-radius: 6px;
   }
 
   p {
     margin-bottom: 15px;
   }
 
-  ion-icon[name="close-outline"] {
+  button[aria-label="close"] {
     position: absolute;
     top: 10px;
     right: 10px;
