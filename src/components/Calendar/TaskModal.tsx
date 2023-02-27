@@ -1,14 +1,30 @@
-import { Close, Delete } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Close, Delete, Save } from '@mui/icons-material';
+import { IconButton, TextField } from '@mui/material';
+import { useState } from 'react';
+import { ILabel } from '../../types';
 import { ModalWrapper } from './Calendar.styled';
+import TaskLabel from './TaskLabel';
 
-const TaskModal = ({ title, date, handleDelete, handleModalClose }: any) => {
+const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTaskLabels }: any) => {
+   const {id, date, labels: taskLabels} = taskData
+   const [title, setTitle] = useState(taskData.title)
+   const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
    return (
-      <ModalWrapper>
-         <h2>{title}</h2>
+      <ModalWrapper onClick={(e: any) => e.stopPropagation()}>
+         <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: any) => setTitle(e.target.value)} />
          <p>{date.toDateString()}</p>
-         <IconButton aria-label="trash" onClick={handleDelete}>
-            <Delete />
+         {id && <>
+            <TaskLabel labels={labels} taskLabels={taskLabels} onChange={setLabelName} />
+            <IconButton aria-label="trash" onClick={handleDelete}>
+               <Delete />
+            </IconButton>
+         </>
+         }
+         <IconButton aria-label="save" onClick={(e: any) => {
+            e.stopPropagation()
+            updateTaskLabels({id, title, labels: labelName})
+         }}>
+            <Save />
          </IconButton>
          <IconButton aria-label="close" onClick={handleModalClose}>
             <Close />
