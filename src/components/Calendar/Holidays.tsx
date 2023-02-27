@@ -1,3 +1,4 @@
+import { HOLIDAY_COLOR_DEFAULT } from '../../data';
 import { datesAreOnSameDay } from '../../helpers';
 import { StyledHoliday } from './Calendar.styled';
 
@@ -10,7 +11,7 @@ const Holidays = ({date, data}: any) => {
                   <StyledHoliday
                      className="StyledHoliday"
                      key={`${holiday.name}_${index}`}
-                     bgColor='brown'
+                     bgColor={HOLIDAY_COLOR_DEFAULT}
                   >
                      {holiday.name}
                   </StyledHoliday>
