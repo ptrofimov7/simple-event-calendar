@@ -1,3 +1,5 @@
+import { Add } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import { datesAreOnSameDay } from '../../helpers';
 
 const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: any) => {
@@ -8,16 +10,21 @@ const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: an
          onDragEnter={(e) => onDragEnter(date, e)}
          onDragOver={(e) => e.preventDefault()}
          onDragEnd={onDragEnd}
-         onClick={(e) =>  addTask(date, e )}
       >
          <span
-            className={`nonDRAG ${datesAreOnSameDay( new Date(), date )
+            className={`nonDRAG ${datesAreOnSameDay(new Date(), date)
                ? "active"
                : ""
                }`}
          >
             {day}
          </span>
+         <IconButton aria-label="add task" onClick={(e) => {
+            e.stopPropagation()
+            addTask(date, e)
+         }}>
+            <Add />
+         </IconButton>
          {children}
       </div>
    );

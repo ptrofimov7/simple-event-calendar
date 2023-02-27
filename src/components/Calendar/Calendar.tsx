@@ -4,15 +4,14 @@ import {
    Wrapper,
    HeadDays,
 } from "./Calendar.styled";
-import { DAYS, MOCKTASKS } from "../../data/";
+import { DAYS, MOCKTASKS, TASK_COLOR_DEFAULT } from "../../data/";
 import {
-   getDarkColor,
-   getDaysInMonth,
    getSortedDays,
+   getUniqId,
    nextMonth,
    prevMonth,
 } from "../../helpers";
-import { ITask } from "../../types";
+import { ILabel, ITask } from "../../types";
 import Tasks from "./Tasks";
 import CalendarDay from "./CalendarDay";
 import CalendarHeader from "./CalendarHeader";
@@ -21,17 +20,77 @@ import CalendarActions from "./CalendarActions";
 import Holidays from "./Holidays";
 import { useQuery } from "react-query";
 import fetchHolidays from "./api/fetchHolidays";
+import TaskLabelModal from "./TaskLabelModal";
 
 export default function Calendar() {
    const [currentDate, setCurrentDate] = useState(new Date(2022, 9, 1));
    const [tasks, setTasks] = useState(MOCKTASKS);
    const dragDateRef = useRef<any>();
    const dragindexRef = useRef<any>();
-   const [showModal, setShowModal] = useState(false);
-   const [modalData, setModalData] = useState<ITask>({} as ITask);
+   const [showTaskModal, setShowTaskModal] = useState(false);
+   const [showLabelModal, setShowLabelModal] = useState(false);
+   const [modalTaskData, setModalTaskData] = useState<ITask>({} as ITask);
    const [search, setSearch] = useState('')
+   const [labels, setLabels] = useState<ILabel[]>([])
+   const [filterLabels, setFilterLabels] = useState<ILabel[]>([])
+   const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
    const currentYear = currentDate.getFullYear()
-   const {data: holidays, isError, isLoading} = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
+   const { data: holidays, isError, isLoading } = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
+
+   const updateTaskLabels = ({ id, title, labels }: { id: string, title: string, labels: ILabel[] }) => {
+      if (labels || title) {
+         setTasks((prev) => prev.map(task => {
+            if (task.id === id) {
+               return { ...task, labels, title }
+            }
+            return task
+         }));
+      }
+      handleTaskModalClose()
+   };
+
+   const updateFilterLabels = (labels: ILabel[]) => {
+      setFilterLabels(labels);
+   };
+
+   const addUpdateLabel = (label: ILabel) => {
+      const id = label?.id || getUniqId()
+      if (label?.title && label?.color) {
+         setLabels((prev) => {
+            const found = prev.find(element => element.id === id)
+            if (found) {
+               return prev.map(element => {
+                  if (element.id === id) {
+                     return {
+                        ...element,
+                       ...label
+                     }
+                  }
+                  return element
+               })
+            }
+            return [
+               ...prev,
+               {  ...label, id }
+            ]
+         });
+      }
+      handleLabelModalClose()
+   };
+
+   const handleAddEditLabel = (label: ILabel | undefined) => {
+      setShowLabelModal(true);
+      setModalLabelData(label ?? {} as ILabel);
+   };
+
+   const handleLabelModalClose = () => setShowLabelModal(false);
+
+   const deleteLabel = (id: string) => {
+      setLabels((prev) =>
+         prev.filter((label) => label.id !== id)
+      );
+      handleLabelModalClose();
+   };
 
    const addTask = (date: Date, e: any) => {
       if (!e.target.classList.contains("StyledTask")) {
@@ -42,7 +101,7 @@ export default function Calendar() {
             date.setMilliseconds(0);
             setTasks((prev) => [
                ...prev,
-               { date, title: text, color: getDarkColor() }
+               { id: getUniqId(), date, title: text, color: TASK_COLOR_DEFAULT }
             ]);
          }
       }
@@ -84,18 +143,18 @@ export default function Calendar() {
       });
    };
 
-   const handleOnClickTask = (task: any) => {
-      setShowModal(true);
-      setModalData(task);
+   const handleTaskEdit = (task: any) => {
+      setShowTaskModal(true);
+      setModalTaskData(task);
    };
 
-   const handleModalClose = () => setShowModal(false);
+   const handleTaskModalClose = () => setShowTaskModal(false);
 
-   const handleDelete = () => {
+   const handleTaskDelete = () => {
       setTasks((prev) =>
-         prev.filter((task) => task.title !== modalData.title)
+         prev.filter((task) => task.title !== modalTaskData.title)
       );
-      handleModalClose();
+      handleTaskModalClose();
    };
 
    const handleClickPrevMonth = () => {
@@ -107,7 +166,17 @@ export default function Calendar() {
       nextMonth(date, setCurrentDate)
    }
    const sortedDays = getSortedDays(currentDate)
-   const filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
+   let filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
+   filteredTasks = filterLabels.length === 0 ? filteredTasks : filteredTasks.filter((task) => {
+      let taskLabels = task.labels
+      if (!taskLabels) {
+         return false
+      }
+      return taskLabels.some(taskLabel => {
+         return filterLabels.some(label => taskLabel.id === label.id)
+      })
+   }
+   )
 
    if (isLoading) {
       return <div>Loading ...</div>
@@ -123,7 +192,13 @@ export default function Calendar() {
             currentDate={currentDate} handleClickPrevMonth={handleClickPrevMonth}
             handleClickNextMonth={handleClickNextMonth}
          />
-         <CalendarActions search={search} onSearch={setSearch} />
+         <CalendarActions
+            labels={labels}
+            search={search}
+            onSearch={setSearch}
+            handleAddEditLabel={handleAddEditLabel}
+            setFilterLabels={setFilterLabels}
+         />
          <SevenColGrid>
             {DAYS.map((day) => (
                <HeadDays key={day} className="nonDRAG">{day}</HeadDays>
@@ -131,7 +206,6 @@ export default function Calendar() {
          </SevenColGrid>
          <SevenColGrid
             fullheight={true}
-            is28Days={getDaysInMonth(currentDate) === 28}
             rows={Math.ceil(sortedDays.length / 7)}
          >
             {sortedDays.map((day, index) => {
@@ -151,18 +225,29 @@ export default function Calendar() {
                         onDrag={drag}
                         onDragEnter={onDragEnterSameDate}
                         onDragEnd={drop}
-                        onClick={handleOnClickTask}
+                        onClick={handleTaskEdit}
+                        onEditLabel={handleAddEditLabel}
                      />
-                     <Holidays date={date} data={holidays}/>
+                     <Holidays date={date} data={holidays} />
                   </CalendarDay>
                )
             })}
          </SevenColGrid>
-         {showModal && (
+         {showTaskModal && (
             <TaskModal
-               {...modalData}
-               handleDelete={handleDelete}
-               handleModalClose={handleModalClose}
+               labels={labels}
+               updateTaskLabels={updateTaskLabels}
+               taskData={modalTaskData}
+               handleDelete={handleTaskDelete}
+               handleModalClose={handleTaskModalClose}
+            />
+         )}
+         {showLabelModal && (
+            <TaskLabelModal
+               label={modalLabelData}
+               handleModalSave={addUpdateLabel}
+               handleDelete={deleteLabel}
+               handleModalClose={handleLabelModalClose}
             />
          )}
       </Wrapper>
