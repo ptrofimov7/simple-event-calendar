@@ -3,7 +3,13 @@ import { IconButton } from '@mui/material';
 import { getMonthYear } from '../../helpers';
 import { DateControls } from '../../styles/Calendar.styled';
 
-const CalendarHeader = ({ currentDate, handleClickPrevMonth, handleClickNextMonth }: any) => {
+interface CalendarHeaderProps {
+   currentDate: Date,
+   handleClickPrevMonth: () => void,
+   handleClickNextMonth: () => void
+}
+
+const CalendarHeader = ({ currentDate, handleClickPrevMonth, handleClickNextMonth }: CalendarHeaderProps) => {
    const year = getMonthYear(currentDate)
    return (
       <DateControls>

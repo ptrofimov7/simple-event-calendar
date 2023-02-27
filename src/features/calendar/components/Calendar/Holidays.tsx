@@ -1,12 +1,18 @@
 import { HOLIDAY_COLOR_DEFAULT } from '../../data';
 import { datesAreOnSameDay } from '../../helpers';
 import { StyledHoliday } from '../../styles/Calendar.styled';
+import { IHoliday } from '../../types';
 
-const Holidays = ({ date, data }: any) => {
+interface HolidaysProps {
+   date: Date,
+   data: IHoliday[]
+}
+
+const Holidays = ({ date, data }: HolidaysProps) => {
    return (
       <>
          {data.map(
-            (holiday: any, index: number) =>
+            (holiday: IHoliday, index: number) =>
                datesAreOnSameDay(holiday.date, date) && (
                   <StyledHoliday
                      className="StyledHoliday"

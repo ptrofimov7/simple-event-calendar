@@ -1,9 +1,23 @@
 import { Box, Button, TextField } from '@mui/material';
 import { useRef } from 'react';
+import { ILabel } from '../../types';
 import TaskLabel from '../Tasks/TaskLabel';
 
-const CalendarActions = ({ search, labels, onSearch, handleAddEditLabel, setFilterLabels,
-   saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: any) => {
+
+interface CalendarActionsProps {
+   search: string,
+   labels: ILabel[],
+   onSearch: (value: string) => void,
+   handleAddEditLabel: (label?: ILabel) => void,
+   setFilterLabels: (labels: ILabel[]) => void,
+   saveSettingInFile: () => void,
+   loadSettingsFromFile: (file: File) => void,
+   saveCalendarAsImage: () => void
+}
+
+const CalendarActions = ({
+   search, labels, onSearch, handleAddEditLabel, setFilterLabels,
+   saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: CalendarActionsProps) => {
 
    const uploadInputRef = useRef<HTMLInputElement>(null)
 
@@ -31,6 +45,7 @@ const CalendarActions = ({ search, labels, onSearch, handleAddEditLabel, setFilt
             }
          />
          <TaskLabel labels={labels} onChange={setFilterLabels} />
+         <Button onClick={() => handleAddEditLabel()}>Create label</Button>
          <input
             color="primary"
             accept=".txt"
@@ -48,7 +63,6 @@ const CalendarActions = ({ search, labels, onSearch, handleAddEditLabel, setFilt
             </Button>
          </label>
          <Button onClick={() => saveSettingInFile()}>Save settings</Button>
-         <Button onClick={() => handleAddEditLabel()}>Create label</Button>
          <Button onClick={() => saveCalendarAsImage()}>Save as picture</Button>
       </Box>
    );

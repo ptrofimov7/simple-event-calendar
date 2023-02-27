@@ -13,14 +13,18 @@ const MenuProps = {
    },
 };
 
-const TaskLabel = ({ labels, taskLabels = [], onChange }: any) => {
+interface TaskLabelProps {
+   labels: ILabel[] | undefined,
+   taskLabels?: ILabel[] | undefined,
+   onChange: (value: ILabel[]) => void
+}
+const TaskLabel = ({ labels, taskLabels = [], onChange }: TaskLabelProps) => {
    const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
 
    const handleChange = (event: SelectChangeEvent<typeof labelName>) => {
       const {
          target: { value },
       } = event;
-      console.log({ value });
       if (typeof value !== 'string') {
          setLabelName(value)
          onChange(value)
@@ -49,7 +53,7 @@ const TaskLabel = ({ labels, taskLabels = [], onChange }: any) => {
             )}
             MenuProps={MenuProps}
          >
-            {labels.map((label: any) => (
+            {labels?.map((label: any) => (
                <MenuItem
                   key={label.id}
                   value={label}

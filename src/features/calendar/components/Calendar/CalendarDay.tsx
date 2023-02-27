@@ -1,8 +1,18 @@
 import { Add } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
+import { ReactNode } from 'react';
 import { datesAreOnSameDay } from '../../helpers';
 
-const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: any) => {
+interface CalendarDayProps {
+   id: string,
+   date: Date,
+   onDragEnter:(date: Date, e: React.DragEvent) => void,
+   addTask: (date: Date) => void,
+   onDragEnd: (e: React.DragEvent) => void,
+   children: ReactNode
+}
+
+const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: CalendarDayProps) => {
    const day = date.getDate() || ''
    return (
       <div

@@ -11,6 +11,10 @@ export type ITask = {
    title: string,
    color: string,
    date: Date,
-   isHoliday?: boolean,
    labels?: Array<ILabel>
+}
+
+export type IHoliday = {
+   name: string,
+   date: Date,
 }

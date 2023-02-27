@@ -1,18 +1,25 @@
 import { Close, Delete, Save } from '@mui/icons-material';
 import { IconButton, TextField } from '@mui/material';
-import { useState } from 'react';
-import { ILabel } from '../../types';
+import React, { useState } from 'react';
+import { ILabel, ITask } from '../../types';
 import { ModalWrapper } from '../../styles/Calendar.styled';
 import TaskLabel from './TaskLabel';
 
+interface TaskModalProps {
+   taskData: ITask,
+   labels: ILabel[] | undefined,
+   handleDelete: () => void,
+   handleModalClose: () => void,
+   updateTaskLabels: (task: ITask) => void
+}
 
-const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTaskLabels }: any) => {
+const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTaskLabels }: TaskModalProps) => {
    const { id, date, labels: taskLabels } = taskData
    const [title, setTitle] = useState(taskData.title)
-   const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
+   const [labelName, setLabelName] = useState<ILabel[]>(taskLabels as ILabel[]);
    return (
-      <ModalWrapper onClick={(e: any) => e.stopPropagation()}>
-         <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: any) => setTitle(e.target.value)} />
+      <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+         <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
          <p>{date.toDateString()}</p>
          {id && <>
             <TaskLabel labels={labels} taskLabels={taskLabels} onChange={setLabelName} />
@@ -21,7 +28,7 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTas
             </IconButton>
          </>
          }
-         <IconButton aria-label="save" onClick={(e: any) => {
+         <IconButton aria-label="save" onClick={(e: React.MouseEvent) => {
             e.stopPropagation()
             updateTaskLabels({ ...taskData, title, labels: labelName })
          }}>

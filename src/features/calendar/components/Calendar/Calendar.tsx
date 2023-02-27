@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
    SevenColGrid,
    Wrapper,
@@ -115,7 +115,7 @@ export default function Calendar() {
       setModalTaskData({ id: '', date, title: '', color: TASK_COLOR_DEFAULT });
    };
 
-   const drag = (index: number, date: Date, e: any) => {
+   const drag = (index: number, date: Date, e: React.DragEvent) => {
       dragindexRef.current = { index, date, target: e.target };
    };
 
@@ -131,7 +131,7 @@ export default function Calendar() {
       dragDateRef.current = { index, date, target: e.target.id };
    };
 
-   const drop = (e: any) => {
+   const drop = (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation()
       const IsSameDate = dragDateRef.current.date === dragindexRef.current.date
@@ -151,7 +151,7 @@ export default function Calendar() {
       });
    };
 
-   const handleTaskEdit = (task: any) => {
+   const handleTaskEdit = (task: ITask) => {
       setShowTaskModal(true);
       setModalTaskData(task);
    };
@@ -212,7 +212,6 @@ export default function Calendar() {
       });
       fileReader.readAsText(blob);
    }
-
 
    const saveCalendarAsImage = () => {
       refCalendar.current && html2canvas(refCalendar.current).then(canvas => {
