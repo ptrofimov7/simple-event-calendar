@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-  /* border: 1px solid; */
-  /* height: 99vh; */
+export const Wrapper = styled.div<any>`
+  height: 99vh;
 `;
 
-export const StyledTask = styled.div`
+export const StyledTask = styled.div<{ bgColor: string }>`
   background: ${({ bgColor }) => bgColor};
   color: white;
   text-align: left !important;
@@ -18,7 +17,7 @@ export const StyledTask = styled.div`
 `;
 
 
-export const StyledHoliday = styled.span`
+export const StyledHoliday = styled.span<{ bgColor: string }>`
   background: ${({ bgColor }) => bgColor};
   color: white;
   text-align: left !important;
@@ -30,7 +29,7 @@ export const StyledHoliday = styled.span`
   text-transform: capitalize;
 `;
 
-export const SevenColGrid = styled.div`
+export const SevenColGrid = styled.div<any>`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   ${(props) => props.fullheight && `height: calc(100% - 136px);`}

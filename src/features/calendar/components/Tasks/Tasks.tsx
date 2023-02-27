@@ -1,5 +1,5 @@
-import { SeeMore, StyledTask } from "./Calendar.styled";
 import { datesAreOnSameDay } from "../../helpers";
+import { SeeMore, StyledTask } from "../../styles/Calendar.styled";
 import TaskLabels from "./TaskLabels";
 
 const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLabel }: any) => {

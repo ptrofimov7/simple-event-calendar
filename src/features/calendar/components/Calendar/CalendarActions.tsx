@@ -1,6 +1,6 @@
 import { Box, Button, TextField } from '@mui/material';
 import { useRef } from 'react';
-import TaskLabel from './TaskLabel';
+import TaskLabel from '../Tasks/TaskLabel';
 
 const CalendarActions = ({ search, labels, onSearch, handleAddEditLabel, setFilterLabels,
    saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: any) => {

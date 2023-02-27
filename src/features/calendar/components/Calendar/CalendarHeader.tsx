@@ -1,7 +1,7 @@
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { getMonthYear } from '../../helpers';
-import { DateControls } from './Calendar.styled';
+import { DateControls } from '../../styles/Calendar.styled';
 
 const CalendarHeader = ({ currentDate, handleClickPrevMonth, handleClickNextMonth }: any) => {
    const year = getMonthYear(currentDate)
@@ -14,7 +14,7 @@ const CalendarHeader = ({ currentDate, handleClickPrevMonth, handleClickNextMont
          <IconButton aria-label="next" onClick={handleClickNextMonth}>
             <ArrowForward />
          </IconButton>
-       </DateControls>
+      </DateControls>
    );
 };
 

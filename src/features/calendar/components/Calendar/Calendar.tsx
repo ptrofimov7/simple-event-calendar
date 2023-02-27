@@ -3,8 +3,8 @@ import {
    SevenColGrid,
    Wrapper,
    HeadDays,
-} from "./Calendar.styled";
-import { DAYS, MOCKTASKS, TASK_COLOR_DEFAULT } from "../../data/";
+} from "../../styles/Calendar.styled";
+import { DAYS, TASK_COLOR_DEFAULT } from "../../data";
 import {
    getSortedDays,
    getUniqId,
@@ -12,20 +12,21 @@ import {
    prevMonth,
 } from "../../helpers";
 import { ILabel, ITask } from "../../types";
-import Tasks from "./Tasks";
+import Tasks from "../Tasks/Tasks";
 import CalendarDay from "./CalendarDay";
 import CalendarHeader from "./CalendarHeader";
-import TaskModal from "./TaskModal";
+import TaskModal from "../Tasks/TaskModal";
 import CalendarActions from "./CalendarActions";
 import Holidays from "./Holidays";
 import { useQuery } from "react-query";
-import fetchHolidays from "./api/fetchHolidays";
-import TaskLabelModal from "./TaskLabelModal";
+
 import html2canvas from "html2canvas";
+import fetchHolidays from "../../api/fetchHolidays";
+import TaskLabelModal from "../Tasks/TaskLabelModal";
 
 export default function Calendar() {
-   const [currentDate, setCurrentDate] = useState(new Date(2022, 9, 1));
-   const [tasks, setTasks] = useState(MOCKTASKS);
+   const [currentDate, setCurrentDate] = useState(new Date(2023, 2, 1));
+   const [tasks, setTasks] = useState<ITask[]>([]);
    const dragDateRef = useRef<any>();
    const dragindexRef = useRef<any>();
    const [showTaskModal, setShowTaskModal] = useState(false);

@@ -1,10 +1,11 @@
 import { Box, Chip, styled } from '@mui/material';
 import { ILabel } from '../../types';
 
+
 const ListItem = styled('li')(({ theme }) => ({
    margin: theme.spacing(0.5),
 }));
-const TaskLabels = ({ labels, onEdit }: {labels: ILabel[] | undefined, onEdit: (value: ILabel) => void}) => {
+const TaskLabels = ({ labels, onEdit }: { labels: ILabel[] | undefined, onEdit: (value: ILabel) => void }) => {
 
    return (
       <Box
@@ -23,11 +24,11 @@ const TaskLabels = ({ labels, onEdit }: {labels: ILabel[] | undefined, onEdit: (
                   <Chip
                      size='small'
                      label={label.title}
-                     onClick={(e) =>  {
+                     onClick={(e) => {
                         e.stopPropagation()
                         onEdit(label)
                      }}
-                     sx={{color: 'white', background: `${label.color}`}}
+                     sx={{ background: `${label.color}` }}
                   />
                </ListItem>
             );

@@ -13,7 +13,7 @@ const MenuProps = {
    },
 };
 
-const TaskLabel = ({ labels, taskLabels=[], onChange }: any) => {
+const TaskLabel = ({ labels, taskLabels = [], onChange }: any) => {
    const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
 
    const handleChange = (event: SelectChangeEvent<typeof labelName>) => {
@@ -40,10 +40,10 @@ const TaskLabel = ({ labels, taskLabels=[], onChange }: any) => {
                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value: ILabel) => (
                      <Chip
-                     key={value.id}
-                     label={value.title}
-                     sx={{background: `${value.color}`}}
-                  />
+                        key={value.id}
+                        label={value.title}
+                        sx={{ background: `${value.color}` }}
+                     />
                   ))}
                </Box>
             )}
@@ -53,7 +53,7 @@ const TaskLabel = ({ labels, taskLabels=[], onChange }: any) => {
                <MenuItem
                   key={label.id}
                   value={label}
-                  sx={{background: `${label.color}`}}
+                  sx={{ background: `${label.color}` }}
                >
                   {label.title}
                </MenuItem>

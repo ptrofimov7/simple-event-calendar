@@ -2,11 +2,12 @@ import { Close, Delete, Save } from '@mui/icons-material';
 import { IconButton, TextField } from '@mui/material';
 import { useState } from 'react';
 import { ILabel } from '../../types';
-import { ModalWrapper } from './Calendar.styled';
+import { ModalWrapper } from '../../styles/Calendar.styled';
 import TaskLabel from './TaskLabel';
 
+
 const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTaskLabels }: any) => {
-   const {id, date, labels: taskLabels} = taskData
+   const { id, date, labels: taskLabels } = taskData
    const [title, setTitle] = useState(taskData.title)
    const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
    return (
@@ -22,7 +23,7 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTas
          }
          <IconButton aria-label="save" onClick={(e: any) => {
             e.stopPropagation()
-            updateTaskLabels({...taskData, title, labels: labelName})
+            updateTaskLabels({ ...taskData, title, labels: labelName })
          }}>
             <Save />
          </IconButton>
