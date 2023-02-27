@@ -1,14 +1,13 @@
 export type IColor = 'red' | 'green' | 'yellow' | 'blue'
 
-export type IColorHolidays = 'brown'
-export type IColorCommonTask = 'gray'
-
 export type ILabel = {
+   id: string,
    title: string,
    color: IColor
 }
 
 export type ITask = {
+   id: string,
    title: string,
    color: string,
    date: Date,

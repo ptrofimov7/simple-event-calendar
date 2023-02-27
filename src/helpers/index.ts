@@ -1,4 +1,7 @@
-import { DAYS } from "../data";
+
+export const getUniqId = () => {
+   return Math.random().toString(36).substring(2);
+ };
 
 export const getDaysInMonth = (date: Date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -29,7 +32,6 @@ export const datesAreOnSameDay = (first: Date | string, second: Date | string) =
    firstDate.getDate() === secondDate.getDate();
 }
 
-
 export const getMonthYear = (date: Date) => {
   const d = date.toDateString().split(" ");
   return `${d[1]} ${d[3]}`;
@@ -55,14 +57,6 @@ export const prevMonth = (date: Date, cb: (val: Date) => void) => {
     date.setFullYear(date.getFullYear() - 1);
   }
   cb(new Date(date));
-};
-
-export const getDarkColor = () => {
-  var color = "#";
-  for (var i = 0; i < 6; i++) {
-    color += Math.floor(Math.random() * 10);
-  }
-  return color;
 };
 
 export const getSortedDays = (date: Date) => {
