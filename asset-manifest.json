@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/simple-event-calendar/static/css/main.ca530edd.css",
+    "main.js": "/simple-event-calendar/static/js/main.2e0c91a5.js",
+    "index.html": "/simple-event-calendar/index.html",
+    "main.ca530edd.css.map": "/simple-event-calendar/static/css/main.ca530edd.css.map",
+    "main.2e0c91a5.js.map": "/simple-event-calendar/static/js/main.2e0c91a5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ca530edd.css",
+    "static/js/main.2e0c91a5.js"
+  ]
+}
