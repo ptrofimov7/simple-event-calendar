@@ -27,7 +27,7 @@ const TaskLabels = ({ labels, onEdit }: {labels: ILabel[] | undefined, onEdit: (
                         e.stopPropagation()
                         onEdit(label)
                      }}
-                     sx={{color: 'white'}}
+                     sx={{color: 'white', background: `${label.color}`}}
                   />
                </ListItem>
             );

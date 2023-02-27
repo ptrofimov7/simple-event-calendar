@@ -21,7 +21,7 @@ const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: an
          </span>
          <IconButton aria-label="add task" onClick={(e) => {
             e.stopPropagation()
-            addTask(date, e)
+            addTask(date)
          }}>
             <Add />
          </IconButton>

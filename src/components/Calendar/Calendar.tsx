@@ -21,6 +21,7 @@ import Holidays from "./Holidays";
 import { useQuery } from "react-query";
 import fetchHolidays from "./api/fetchHolidays";
 import TaskLabelModal from "./TaskLabelModal";
+import html2canvas from "html2canvas";
 
 export default function Calendar() {
    const [currentDate, setCurrentDate] = useState(new Date(2022, 9, 1));
@@ -36,45 +37,49 @@ export default function Calendar() {
    const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
    const currentYear = currentDate.getFullYear()
    const { data: holidays, isError, isLoading } = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
+   const refCalendar = useRef<HTMLElement>(null)
 
-   const updateTaskLabels = ({ id, title, labels }: { id: string, title: string, labels: ILabel[] }) => {
-      if (labels || title) {
-         setTasks((prev) => prev.map(task => {
-            if (task.id === id) {
-               return { ...task, labels, title }
-            }
-            return task
-         }));
+   const updateTask = (taskData: ITask) => {
+      const id = taskData?.id || getUniqId()
+      setTasks((prev) => {
+         const found = prev.find(element => element.id === id)
+         if (found) {
+            return prev.map(task => {
+               if (task.id === id) {
+                  return { ...task, ...taskData }
+               }
+               return task
+            })
+         }
+         return [
+            ...prev,
+            { ...taskData, id }
+         ]
       }
+      );
       handleTaskModalClose()
-   };
-
-   const updateFilterLabels = (labels: ILabel[]) => {
-      setFilterLabels(labels);
    };
 
    const addUpdateLabel = (label: ILabel) => {
       const id = label?.id || getUniqId()
-      if (label?.title && label?.color) {
-         setLabels((prev) => {
-            const found = prev.find(element => element.id === id)
-            if (found) {
-               return prev.map(element => {
-                  if (element.id === id) {
-                     return {
-                        ...element,
-                       ...label
-                     }
+      setLabels((prev) => {
+         const found = prev.find(element => element.id === id)
+         if (found) {
+            return prev.map(element => {
+               if (element.id === id) {
+                  return {
+                     ...element,
+                     ...label
                   }
-                  return element
-               })
-            }
-            return [
-               ...prev,
-               {  ...label, id }
-            ]
-         });
-      }
+               }
+               return element
+            })
+         }
+         return [
+            ...prev,
+            { ...label, id }
+         ]
+      });
       handleLabelModalClose()
    };
 
@@ -89,22 +94,24 @@ export default function Calendar() {
       setLabels((prev) =>
          prev.filter((label) => label.id !== id)
       );
+      setFilterLabels((prev) => prev.filter((label) => label.id !== id))
+      setTasks(prev => (
+         prev.map(task => {
+            const labels = task?.labels
+            if (labels) {
+               return { ...task, labels: labels.filter(label => label.id !== id) }
+            }
+            return task
+         })))
       handleLabelModalClose();
    };
 
-   const addTask = (date: Date, e: any) => {
-      if (!e.target.classList.contains("StyledTask")) {
-         const text = window.prompt("name");
-         if (text) {
-            date.setHours(0);
-            date.setSeconds(0);
-            date.setMilliseconds(0);
-            setTasks((prev) => [
-               ...prev,
-               { id: getUniqId(), date, title: text, color: TASK_COLOR_DEFAULT }
-            ]);
-         }
-      }
+   const handleTaskAdd = (date: Date) => {
+      date.setHours(0);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
+      setShowTaskModal(true);
+      setModalTaskData({ id: '', date, title: '', color: TASK_COLOR_DEFAULT });
    };
 
    const drag = (index: number, date: Date, e: any) => {
@@ -178,6 +185,51 @@ export default function Calendar() {
    }
    )
 
+   const saveSettingInFile = () => {
+      const element = document.createElement("a");
+      const textFile = new Blob([JSON.stringify({ tasks, labels, currentDate, filterLabels })], { type: 'application/json' });
+      element.href = URL.createObjectURL(textFile);
+      element.download = "calendar_settings.txt";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element)
+   }
+
+   const loadSettingsFromFile = (file: File) => {
+      const blob = new Blob([file], { type: "application/json" });
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", (e: any) => {
+         try {
+            const settings = JSON.parse(e.target.result)
+            setCurrentDate(settings?.currentDate ? new Date(settings.currentDate) : new Date())
+            setTasks(settings?.tasks || [])
+            setLabels(settings?.labels || [])
+            setFilterLabels(settings?.filterLabels || [])
+         } catch (error) {
+
+         }
+      });
+      fileReader.readAsText(blob);
+   }
+
+
+   const saveCalendarAsImage = () => {
+      refCalendar.current && html2canvas(refCalendar.current).then(canvas => {
+         canvas.toBlob((blob: any) => {
+            const element = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            element.href = url
+            element.onload = () => {
+               URL.revokeObjectURL(url);
+            };
+            element.download = "calendar_screenshot.png";
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element)
+         });
+      });
+   }
+
    if (isLoading) {
       return <div>Loading ...</div>
    }
@@ -187,7 +239,7 @@ export default function Calendar() {
    }
 
    return (
-      <Wrapper>
+      <Wrapper ref={refCalendar}>
          <CalendarHeader
             currentDate={currentDate} handleClickPrevMonth={handleClickPrevMonth}
             handleClickNextMonth={handleClickNextMonth}
@@ -198,6 +250,9 @@ export default function Calendar() {
             onSearch={setSearch}
             handleAddEditLabel={handleAddEditLabel}
             setFilterLabels={setFilterLabels}
+            saveSettingInFile={saveSettingInFile}
+            loadSettingsFromFile={loadSettingsFromFile}
+            saveCalendarAsImage={saveCalendarAsImage}
          />
          <SevenColGrid>
             {DAYS.map((day) => (
@@ -217,7 +272,7 @@ export default function Calendar() {
                      id={id}
                      date={date}
                      onDragEnter={onDragEnter}
-                     addTask={addTask}
+                     addTask={handleTaskAdd}
                      onDragEnd={drop}>
                      <Tasks
                         tasks={filteredTasks}
@@ -236,7 +291,7 @@ export default function Calendar() {
          {showTaskModal && (
             <TaskModal
                labels={labels}
-               updateTaskLabels={updateTaskLabels}
+               updateTaskLabels={updateTask}
                taskData={modalTaskData}
                handleDelete={handleTaskDelete}
                handleModalClose={handleTaskModalClose}

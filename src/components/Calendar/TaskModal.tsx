@@ -22,7 +22,7 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTas
          }
          <IconButton aria-label="save" onClick={(e: any) => {
             e.stopPropagation()
-            updateTaskLabels({id, title, labels: labelName})
+            updateTaskLabels({...taskData, title, labels: labelName})
          }}>
             <Save />
          </IconButton>
