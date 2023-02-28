@@ -7,12 +7,12 @@ import { ILabel } from '../../types';
 
 interface TasklabelModalProps {
    label: ILabel,
-   handleModalSave: (label: ILabel) => void,
+   handleUpdate: (label: ILabel) => void,
    handleDelete: (id: string) => void,
    handleModalClose: () => void
 }
 
-const TaskLabelModal = ({ label, handleModalSave, handleDelete, handleModalClose }: TasklabelModalProps) => {
+const TaskLabelModal = ({ label, handleUpdate, handleDelete, handleModalClose }: TasklabelModalProps) => {
    const [color, setColor] = useState(label?.color || '')
    const [title, setTitle] = useState(label?.title || '')
    return (
@@ -34,13 +34,17 @@ const TaskLabelModal = ({ label, handleModalSave, handleDelete, handleModalClose
          </FormControl>
          <IconButton aria-label="save" onClick={(e: React.MouseEvent) => {
             e.stopPropagation()
-            handleModalSave({ id: label?.id, color, title })
+            if (!title || !color) {
+               alert('Title and color are required!')
+               return
+            }
+            handleUpdate({ id: label?.id, color, title })
          }}>
             <Save />
          </IconButton>
          {label?.id && <IconButton aria-label="trash" onClick={(e: React.MouseEvent) => {
             e.stopPropagation()
-            handleDelete(label?.id)
+            handleDelete(label.id)
          }}>
             <Delete />
          </IconButton>

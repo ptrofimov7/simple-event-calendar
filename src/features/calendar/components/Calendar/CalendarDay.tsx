@@ -7,12 +7,12 @@ interface CalendarDayProps {
    id: string,
    date: Date,
    onDragEnter:(date: Date, e: React.DragEvent) => void,
-   addTask: (date: Date) => void,
+   onAddTask: (date: Date) => void,
    onDragEnd: (e: React.DragEvent) => void,
    children: ReactNode
 }
 
-const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: CalendarDayProps) => {
+const CalendarDay = ({ id, date, onDragEnter, onAddTask, onDragEnd, children }: CalendarDayProps) => {
    const day = date.getDate() || ''
    return (
       <div
@@ -29,12 +29,12 @@ const CalendarDay = ({ id, date, onDragEnter, addTask, onDragEnd, children }: Ca
          >
             {day}
          </span>
-         <IconButton aria-label="add task" onClick={(e) => {
+         {day && <IconButton aria-label="add task" onClick={(e) => {
             e.stopPropagation()
-            addTask(date)
+            onAddTask(date)
          }}>
             <Add />
-         </IconButton>
+         </IconButton>}
          {children}
       </div>
    );

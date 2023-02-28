@@ -10,10 +10,10 @@ interface TaskModalProps {
    labels: ILabel[] | undefined,
    handleDelete: () => void,
    handleModalClose: () => void,
-   updateTaskLabels: (task: ITask) => void
+   handleUpdate: (task: ITask) => void
 }
 
-const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTaskLabels }: TaskModalProps) => {
+const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpdate }: TaskModalProps) => {
    const { id, date, labels: taskLabels } = taskData
    const [title, setTitle] = useState(taskData.title)
    const [labelName, setLabelName] = useState<ILabel[]>(taskLabels as ILabel[]);
@@ -21,16 +21,18 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, updateTas
       <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
          <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
          <p>{date.toDateString()}</p>
-         {id && <>
-            <TaskLabel labels={labels} taskLabels={taskLabels} onChange={setLabelName} />
-            <IconButton aria-label="trash" onClick={handleDelete}>
-               <Delete />
-            </IconButton>
-         </>
+         <TaskLabel labels={labels} taskLabels={taskLabels} onChange={setLabelName} />
+         {id && <IconButton aria-label="trash" onClick={handleDelete}>
+            <Delete />
+         </IconButton>
          }
          <IconButton aria-label="save" onClick={(e: React.MouseEvent) => {
             e.stopPropagation()
-            updateTaskLabels({ ...taskData, title, labels: labelName })
+            if (!title) {
+               alert('Title is required')
+               return
+            }
+            handleUpdate({ ...taskData, title, labels: labelName })
          }}>
             <Save />
          </IconButton>

@@ -8,7 +8,7 @@ interface CalendarActionsProps {
    search: string,
    labels: ILabel[],
    onSearch: (value: string) => void,
-   handleAddEditLabel: (label?: ILabel) => void,
+   onAddLabel: (label?: ILabel) => void,
    setFilterLabels: (labels: ILabel[]) => void,
    saveSettingInFile: () => void,
    loadSettingsFromFile: (file: File) => void,
@@ -16,7 +16,7 @@ interface CalendarActionsProps {
 }
 
 const CalendarActions = ({
-   search, labels, onSearch, handleAddEditLabel, setFilterLabels,
+   search, labels, onSearch, onAddLabel, setFilterLabels,
    saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: CalendarActionsProps) => {
 
    const uploadInputRef = useRef<HTMLInputElement>(null)
@@ -45,7 +45,7 @@ const CalendarActions = ({
             }
          />
          <TaskLabel labels={labels} onChange={setFilterLabels} />
-         <Button onClick={() => handleAddEditLabel()}>Create label</Button>
+         <Button onClick={() => onAddLabel()}>Create label</Button>
          <input
             color="primary"
             accept=".txt"
