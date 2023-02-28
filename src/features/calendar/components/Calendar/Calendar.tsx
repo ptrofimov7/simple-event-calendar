@@ -19,6 +19,7 @@ export default function Calendar() {
       isError,
       currentDate,
       labels,
+      filterLabels,
       search,
       refCalendar,
       filteredTasks,
@@ -66,6 +67,7 @@ export default function Calendar() {
          />
          <CalendarActions
             labels={labels}
+            filterLabels={filterLabels}
             search={search}
             onSearch={setSearch}
             onAddLabel={openLabelModal}

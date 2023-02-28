@@ -7,6 +7,7 @@ import TaskLabel from '../Tasks/TaskLabel';
 interface CalendarActionsProps {
    search: string,
    labels: ILabel[],
+   filterLabels:ILabel[],
    onSearch: (value: string) => void,
    onAddLabel: (label?: ILabel) => void,
    setFilterLabels: (labels: ILabel[]) => void,
@@ -16,7 +17,7 @@ interface CalendarActionsProps {
 }
 
 const CalendarActions = ({
-   search, labels, onSearch, onAddLabel, setFilterLabels,
+   search, labels, filterLabels, onSearch, onAddLabel, setFilterLabels,
    saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: CalendarActionsProps) => {
 
    const uploadInputRef = useRef<HTMLInputElement>(null)
@@ -34,6 +35,7 @@ const CalendarActions = ({
          alignItems: 'center'
       }}>
          <TextField
+            sx={{minWidth: 50}}
             id="Outlined-search"
             label="Search field"
             type="search"
@@ -44,7 +46,7 @@ const CalendarActions = ({
             }
             }
          />
-         <TaskLabel labels={labels} onChange={setFilterLabels} />
+         <TaskLabel labels={labels} taskLabels={filterLabels} onChange={setFilterLabels} />
          <Button onClick={() => onAddLabel()}>Create label</Button>
          <input
             color="primary"
@@ -59,11 +61,11 @@ const CalendarActions = ({
                variant="contained"
                onClick={() => uploadInputRef.current && uploadInputRef.current.click()}
             >
-               Load settings
+               Load
             </Button>
          </label>
-         <Button onClick={() => saveSettingInFile()}>Save settings</Button>
-         <Button onClick={() => saveCalendarAsImage()}>Save as picture</Button>
+         <Button onClick={() => saveSettingInFile()}>Save</Button>
+         <Button onClick={() => saveCalendarAsImage()}>Save as image</Button>
       </Box>
    );
 };

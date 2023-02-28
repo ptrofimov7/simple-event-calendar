@@ -20,26 +20,23 @@ const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLab
          {tasks.map(
             (task: ITask, index: number) =>
                datesAreOnSameDay(task.date, date) && (
-                  <>
-                     <StyledTask
-                        onDragStart={(e: React.DragEvent) => onDrag(index, date, e)}
-                        onDragEnter={(e: React.DragEvent) => onDragEnter(index, date, e)}
-                        onDragEnd={onDragEnd}
-                        onClick={(e: React.MouseEvent) => {
-                           e.stopPropagation()
-                           onClick(task)
-                        }}
-                        draggable
-                        className="StyledTask"
-                        id={`${task.color} ${task.title}`}
-                        key={task.title}
-                        bgColor={task.color}
-                     >
-                        <p>{task.title}</p>
-                        <TaskLabels labels={task.labels} onEdit={onEditLabel} />
-                     </StyledTask>
-
-                  </>
+                  <StyledTask
+                     onDragStart={(e: React.DragEvent) => onDrag(index, date, e)}
+                     onDragEnter={(e: React.DragEvent) => onDragEnter(index, date, e)}
+                     onDragEnd={onDragEnd}
+                     onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation()
+                        onClick(task)
+                     }}
+                     draggable
+                     className="StyledTask"
+                     id={`${task.color} ${task.title}`}
+                     key={`${task.id}`}
+                     bgColor={task.color}
+                  >
+                     <p>{task.title}</p>
+                     <TaskLabels labels={task.labels} onEdit={onEditLabel} />
+                  </StyledTask>
                )
          )}
       </TaskWrapper>
@@ -48,7 +45,7 @@ const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLab
 
 export default Tasks;
 
-const TaskWrapper = ({ children }: {children: ReactNode[]}) => {
+const TaskWrapper = ({ children }: { children: ReactNode[] }) => {
    if (children.filter((child: ReactNode) => child).length > 0)
       return (
          <>

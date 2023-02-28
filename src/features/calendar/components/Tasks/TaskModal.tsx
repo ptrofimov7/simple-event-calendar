@@ -21,7 +21,7 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpd
       <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
          <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
          <p>{date.toDateString()}</p>
-         <TaskLabel labels={labels} taskLabels={taskLabels} onChange={setLabelName} />
+         <TaskLabel labels={labels} taskLabels={labelName} onChange={setLabelName} />
          {id && <IconButton aria-label="trash" onClick={handleDelete}>
             <Delete />
          </IconButton>

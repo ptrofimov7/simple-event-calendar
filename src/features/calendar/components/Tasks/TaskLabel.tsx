@@ -19,14 +19,14 @@ interface TaskLabelProps {
    onChange: (value: ILabel[]) => void
 }
 const TaskLabel = ({ labels, taskLabels = [], onChange }: TaskLabelProps) => {
-   const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
+   //const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
 
-   const handleChange = (event: SelectChangeEvent<typeof labelName>) => {
+   const handleChange = (event: SelectChangeEvent<typeof taskLabels>) => {
       const {
          target: { value },
       } = event;
       if (typeof value !== 'string') {
-         setLabelName(value)
+         //setLabelName(value)
          onChange(value)
       }
    };
@@ -37,7 +37,7 @@ const TaskLabel = ({ labels, taskLabels = [], onChange }: TaskLabelProps) => {
             labelId="demo-multiple-chip-label"
             id="demo-multiple-chip"
             multiple
-            value={labelName}
+            value={taskLabels}
             onChange={handleChange}
             input={<OutlinedInput id="select-multiple-chip" label="Label" />}
             renderValue={(selected) => (
