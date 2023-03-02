@@ -1,5 +1,4 @@
 import { Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
-import { useState } from 'react';
 import { ILabel } from '../../types';
 
 const ITEM_HEIGHT = 48;
@@ -19,14 +18,12 @@ interface TaskLabelProps {
    onChange: (value: ILabel[]) => void
 }
 const TaskLabel = ({ labels, taskLabels = [], onChange }: TaskLabelProps) => {
-   //const [labelName, setLabelName] = useState<ILabel[]>(taskLabels);
 
-   const handleChange = (event: SelectChangeEvent<typeof taskLabels>) => {
+   const handleChange = (event: SelectChangeEvent<ILabel[]>) => {
       const {
          target: { value },
       } = event;
       if (typeof value !== 'string') {
-         //setLabelName(value)
          onChange(value)
       }
    };
@@ -42,15 +39,15 @@ const TaskLabel = ({ labels, taskLabels = [], onChange }: TaskLabelProps) => {
             input={<OutlinedInput id="select-multiple-chip" label="Label" />}
             renderValue={(selected) => (
                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value: ILabel) => (
+                  {selected?.map((value: ILabel) => (
                      <Chip
                         key={value.id}
                         label={value.title}
                         sx={{ background: `${value.color}` }}
                      />
                   ))}
-               </Box>
-            )}
+               </Box>)}
+
             MenuProps={MenuProps}
          >
             {labels?.map((label: any) => (

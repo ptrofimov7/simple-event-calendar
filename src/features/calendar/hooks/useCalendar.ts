@@ -4,11 +4,11 @@ import { useQuery } from "react-query";
 import fetchHolidays from "../api/fetchHolidays";
 import { TASK_COLOR_DEFAULT } from "../data";
 import { getSortedDays, getUniqId, nextMonth, prevMonth } from "../helpers";
-import { ILabel, ITask } from "../types";
+import { ILabel, ITask, ITaskState } from "../types";
 
 export default function useCalendar() {
    const [currentDate, setCurrentDate] = useState(new Date(2023, 2, 1));
-   const [tasks, setTasks] = useState<ITask[]>([]);
+   const [tasks, setTasks] = useState<ITaskState[]>([]);
    const dragMovedElement = useRef<any>();
    const dragHoverElement = useRef<any>();
    const [showTaskModal, setShowTaskModal] = useState(false);
@@ -16,13 +16,13 @@ export default function useCalendar() {
    const [modalTaskData, setModalTaskData] = useState<ITask>({} as ITask);
    const [search, setSearch] = useState('')
    const [labels, setLabels] = useState<ILabel[]>([])
-   const [filterLabels, setFilterLabels] = useState<ILabel[]>([])
+   const [filterLabels, setFilterLabels] = useState<ILabel['id'][]>([])
    const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
    const currentYear = currentDate.getFullYear()
    const { data: holidays, isError, isLoading } = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
    const refCalendar = useRef<HTMLElement>(null)
 
-   const updateTask = (taskData: ITask) => {
+   const updateTask = (taskData: ITaskState) => {
       const id = taskData?.id || getUniqId()
       setTasks((prev) => {
          const found = prev.find(element => element.id === id)
@@ -63,37 +63,7 @@ export default function useCalendar() {
             { ...label, id }
          ]
       });
-      setFilterLabels((prev) => {
-         return prev.map(element => {
-            if (element.id === id) {
-               return {
-                  ...element,
-                  ...label
-               }
-            }
-            return element
-         })
-      })
-      setTasks(prev => (
-         prev.map(task => {
-            const labels = task?.labels
-            if (labels) {
-               return {
-                  ...task, labels: labels.map(element => {
-                     if (element.id === id) {
-                        return {
-                           ...element,
-                           ...label
-                        }
-                     }
-                     return element
-                  })
-               }
-            }
-
-            return task
-         })))
-   closeLabelModal()
+    closeLabelModal()
 };
 
 const openLabelModal = (label: ILabel | undefined) => {
@@ -107,17 +77,22 @@ const deleteLabel = (id: string) => {
    setLabels((prev) =>
       prev.filter((label) => label.id !== id)
    );
-   setFilterLabels((prev) => prev.filter((label) => label.id !== id))
+   setFilterLabels((prev) => prev.filter((labelId) => labelId !== id))
    setTasks(prev => (
       prev.map(task => {
          const labels = task?.labels
          if (labels) {
-            return { ...task, labels: labels.filter(label => label.id !== id) }
+            return { ...task, labels: labels.filter(labelId => labelId !== id) }
          }
          return task
       })))
    closeLabelModal();
 };
+
+const updateFilterLabels = (labelData: ILabel[]) => {
+   const labelsId = labelData.map(label => label.id)
+   setFilterLabels(labelsId)
+}
 
 const openNewTaskModal = (date: Date) => {
    date.setHours(0);
@@ -192,11 +167,21 @@ filteredTasks = filterLabels.length === 0 ? filteredTasks : filteredTasks.filter
    if (!taskLabels) {
       return false
    }
-   return taskLabels.some(taskLabel => {
-      return filterLabels.some(label => taskLabel.id === label.id)
+   return taskLabels.some(taskLabelId => {
+      return filterLabels.some(labelId => taskLabelId === labelId)
    })
 }
 )
+
+let tasksWithLabels = filteredTasks.map(task => {
+   if (task?.labels?.length) {
+      return {...task, labels: task?.labels?.map(labelId => (labels.find(l => l.id === labelId ) as ILabel)).filter(Boolean)}
+   }
+   return task as ITask
+})
+
+
+const filterLabelsFull = filterLabels.map(id => labels.find(label => label.id === id)) as ILabel[]
 
 const saveSettingInFile = () => {
    const element = document.createElement("a");
@@ -215,11 +200,11 @@ const loadSettingsFromFile = (file: File) => {
       try {
          const settings = JSON.parse(e.target.result)
          setCurrentDate(settings?.currentDate ? new Date(settings.currentDate) : new Date())
-         setTasks(settings?.tasks || [])
+         setTasks(settings?.tasks.map((task: any) => ({...task, date: new Date(task.date)})) || [])
          setLabels(settings?.labels || [])
          setFilterLabels(settings?.filterLabels || [])
       } catch (error) {
-
+         console.log(error);
       }
    });
    fileReader.readAsText(blob);
@@ -248,10 +233,10 @@ return {
    currentDate,
    tasks,
    labels,
-   filterLabels,
+   filterLabelsFull,
    search,
    refCalendar,
-   filteredTasks,
+   tasksWithLabels,
    sortedDays,
    modalTaskData,
    modalLabelData,
@@ -260,7 +245,7 @@ return {
    dragHoverElement,
    showTaskModal,
    showLabelModal,
-   setFilterLabels,
+   updateFilterLabels,
    setSearch,
    drag,
    drop,

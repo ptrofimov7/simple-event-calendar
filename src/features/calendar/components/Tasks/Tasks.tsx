@@ -18,8 +18,8 @@ const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLab
    return (
       <TaskWrapper>
          {tasks.map(
-            (task: ITask, index: number) =>
-               datesAreOnSameDay(task.date, date) && (
+            (task: ITask, index: number) => {
+               return datesAreOnSameDay(task.date, date) && (
                   <StyledTask
                      onDragStart={(e: React.DragEvent) => onDrag(index, date, e)}
                      onDragEnter={(e: React.DragEvent) => onDragEnter(index, date, e)}
@@ -38,6 +38,7 @@ const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLab
                      <TaskLabels labels={task.labels} onEdit={onEditLabel} />
                   </StyledTask>
                )
+            }
          )}
       </TaskWrapper>
    );

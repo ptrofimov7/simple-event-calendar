@@ -14,6 +14,14 @@ export type ITask = {
    labels?: Array<ILabel>
 }
 
+export type ITaskState = {
+   id: string,
+   title: string,
+   color: string,
+   date: Date,
+   labels?: Array<ILabel['id']>
+}
+
 export type IHoliday = {
    name: string,
    date: Date,

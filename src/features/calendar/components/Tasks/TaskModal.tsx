@@ -1,7 +1,7 @@
 import { Close, Delete, Save } from '@mui/icons-material';
 import { IconButton, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { ILabel, ITask } from '../../types';
+import { ILabel, ITask, ITaskState } from '../../types';
 import { ModalWrapper } from '../../styles/Calendar.styled';
 import TaskLabel from './TaskLabel';
 
@@ -10,7 +10,7 @@ interface TaskModalProps {
    labels: ILabel[] | undefined,
    handleDelete: () => void,
    handleModalClose: () => void,
-   handleUpdate: (task: ITask) => void
+   handleUpdate: (task: ITaskState) => void
 }
 
 const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpdate }: TaskModalProps) => {
@@ -32,7 +32,7 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpd
                alert('Title is required')
                return
             }
-            handleUpdate({ ...taskData, title, labels: labelName })
+            handleUpdate({ ...taskData, title, labels: labelName?.map(label => label.id) })
          }}>
             <Save />
          </IconButton>

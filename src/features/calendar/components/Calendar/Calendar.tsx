@@ -19,17 +19,17 @@ export default function Calendar() {
       isError,
       currentDate,
       labels,
-      filterLabels,
+      filterLabelsFull,
       search,
       refCalendar,
-      filteredTasks,
+      tasksWithLabels,
       sortedDays,
       modalTaskData,
       modalLabelData,
       holidays,
       showTaskModal,
       showLabelModal,
-      setFilterLabels,
+      updateFilterLabels,
       setSearch,
       drag,
       drop,
@@ -67,11 +67,11 @@ export default function Calendar() {
          />
          <CalendarActions
             labels={labels}
-            filterLabels={filterLabels}
+            filterLabels={filterLabelsFull}
             search={search}
             onSearch={setSearch}
             onAddLabel={openLabelModal}
-            setFilterLabels={setFilterLabels}
+            updateFilterLabels={updateFilterLabels}
             saveSettingInFile={saveSettingInFile}
             loadSettingsFromFile={loadSettingsFromFile}
             saveCalendarAsImage={saveCalendarAsImage}
@@ -97,7 +97,7 @@ export default function Calendar() {
                      onAddTask={openNewTaskModal}
                      onDragEnd={drop}>
                      <Tasks
-                        tasks={filteredTasks}
+                        tasks={tasksWithLabels}
                         date={date}
                         onDrag={drag}
                         onDragEnter={onDragEnterSameDate}
