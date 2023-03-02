@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/simple-event-calendar/static/css/main.ca530edd.css",
-    "main.js": "/simple-event-calendar/static/js/main.149fe08d.js",
+    "main.js": "/simple-event-calendar/static/js/main.abcf7676.js",
     "index.html": "/simple-event-calendar/index.html",
     "main.ca530edd.css.map": "/simple-event-calendar/static/css/main.ca530edd.css.map",
-    "main.149fe08d.js.map": "/simple-event-calendar/static/js/main.149fe08d.js.map"
+    "main.abcf7676.js.map": "/simple-event-calendar/static/js/main.abcf7676.js.map"
   },
   "entrypoints": [
     "static/css/main.ca530edd.css",
-    "static/js/main.149fe08d.js"
+    "static/js/main.abcf7676.js"
   ]
 }
