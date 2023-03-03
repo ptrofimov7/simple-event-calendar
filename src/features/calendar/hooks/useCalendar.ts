@@ -16,7 +16,7 @@ export default function useCalendar() {
    const [modalTaskData, setModalTaskData] = useState<ITask>({} as ITask);
    const [search, setSearch] = useState('')
    const [labels, setLabels] = useState<ILabel[]>([])
-   const [filterLabels, setFilterLabels] = useState<ILabel['id'][]>([])
+   const [filterLabelsId, setFilterLabelsId] = useState<ILabel['id'][]>([])
    const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
    const currentYear = currentDate.getFullYear()
    const { data: holidays, isError, isLoading } = useQuery(['holidays', currentYear], () => fetchHolidays(currentYear))
@@ -77,7 +77,7 @@ const deleteLabel = (id: string) => {
    setLabels((prev) =>
       prev.filter((label) => label.id !== id)
    );
-   setFilterLabels((prev) => prev.filter((labelId) => labelId !== id))
+   setFilterLabelsId((prev) => prev.filter((labelId) => labelId !== id))
    setTasks(prev => (
       prev.map(task => {
          const labels = task?.labels
@@ -91,7 +91,7 @@ const deleteLabel = (id: string) => {
 
 const updateFilterLabels = (labelData: ILabel[]) => {
    const labelsId = labelData.map(label => label.id)
-   setFilterLabels(labelsId)
+   setFilterLabelsId(labelsId)
 }
 
 const openNewTaskModal = (date: Date) => {
@@ -160,32 +160,10 @@ const moveToNextMonth = () => {
    const date = new Date(currentDate)
    nextMonth(date, setCurrentDate)
 }
-const sortedDays = getSortedDays(currentDate)
-let filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
-filteredTasks = filterLabels.length === 0 ? filteredTasks : filteredTasks.filter((task) => {
-   let taskLabels = task.labels
-   if (!taskLabels) {
-      return false
-   }
-   return taskLabels.some(taskLabelId => {
-      return filterLabels.some(labelId => taskLabelId === labelId)
-   })
-}
-)
-
-let tasksWithLabels = filteredTasks.map(task => {
-   if (task?.labels?.length) {
-      return {...task, labels: task?.labels?.map(labelId => (labels.find(l => l.id === labelId ) as ILabel)).filter(Boolean)}
-   }
-   return task as ITask
-})
-
-
-const filterLabelsFull = filterLabels.map(id => labels.find(label => label.id === id)) as ILabel[]
 
 const saveSettingInFile = () => {
    const element = document.createElement("a");
-   const textFile = new Blob([JSON.stringify({ tasks, labels, currentDate, filterLabels })], { type: 'application/json' });
+   const textFile = new Blob([JSON.stringify({ tasks, labels, currentDate, filterLabels: filterLabelsId })], { type: 'application/json' });
    element.href = URL.createObjectURL(textFile);
    element.download = "calendar_settings.txt";
    document.body.appendChild(element);
@@ -202,7 +180,7 @@ const loadSettingsFromFile = (file: File) => {
          setCurrentDate(settings?.currentDate ? new Date(settings.currentDate) : new Date())
          setTasks(settings?.tasks.map((task: any) => ({...task, date: new Date(task.date)})) || [])
          setLabels(settings?.labels || [])
-         setFilterLabels(settings?.filterLabels || [])
+         setFilterLabelsId(settings?.filterLabels || [])
       } catch (error) {
          console.log(error);
       }
@@ -227,13 +205,36 @@ const saveCalendarAsImage = () => {
    });
 }
 
+const sortedDays = getSortedDays(currentDate)
+let filteredTasks = search ? tasks.filter((task) => task.title.toLowerCase().includes(search)) : tasks
+filteredTasks = filterLabelsId.length === 0 ? filteredTasks : filteredTasks.filter((task) => {
+   let taskLabels = task.labels
+   if (!taskLabels) {
+      return false
+   }
+   return taskLabels.some(taskLabelId => {
+      return filterLabelsId.some(labelId => taskLabelId === labelId)
+   })
+}
+)
+
+let tasksWithLabels = filteredTasks.map(task => {
+   if (task?.labels?.length) {
+      return {...task, labels: task?.labels?.map(labelId => (labels.find(l => l.id === labelId ) as ILabel)).filter(Boolean)}
+   }
+   return task as ITask
+})
+
+
+const filterLabels = filterLabelsId.map(id => labels.find(label => label.id === id)) as ILabel[]
+
 return {
    isLoading,
    isError,
    currentDate,
    tasks,
    labels,
-   filterLabelsFull,
+   filterLabels,
    search,
    refCalendar,
    tasksWithLabels,
