@@ -1,28 +1,29 @@
 import { Close, Delete, Save } from '@mui/icons-material';
 import { IconButton, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { ILabel, ITask, ITaskState } from '../../types';
+import { ILabel } from '../../types';
 import { ModalWrapper } from '../../styles/Calendar.styled';
 import TaskLabel from './TaskLabel';
+import { useCalendarContext } from '../../context';
 
-interface TaskModalProps {
-   taskData: ITask,
-   labels: ILabel[] | undefined,
-   handleDelete: () => void,
-   handleModalClose: () => void,
-   handleUpdate: (task: ITaskState) => void
-}
 
-const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpdate }: TaskModalProps) => {
-   const { id, date, labels: taskLabels } = taskData
-   const [title, setTitle] = useState(taskData.title)
+const TaskModal = () => {
+   const {
+      labels,
+      updateTask,
+      modalTaskData,
+      deleteTask,
+      closeTaskModal,
+   } = useCalendarContext()
+   const { id, date, labels: taskLabels } = modalTaskData
+   const [title, setTitle] = useState(modalTaskData.title)
    const [labelName, setLabelName] = useState<ILabel[]>(taskLabels as ILabel[]);
    return (
       <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
          <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
          <p>{date.toDateString()}</p>
          <TaskLabel labels={labels} taskLabels={labelName} onChange={setLabelName} />
-         {id && <IconButton aria-label="trash" onClick={handleDelete}>
+         {id && <IconButton aria-label="trash" onClick={deleteTask}>
             <Delete />
          </IconButton>
          }
@@ -32,11 +33,11 @@ const TaskModal = ({ taskData, labels, handleDelete, handleModalClose, handleUpd
                alert('Title is required')
                return
             }
-            handleUpdate({ ...taskData, title, labels: labelName?.map(label => label.id) })
+            updateTask({ ...modalTaskData, title, labels: labelName?.map(label => label.id) })
          }}>
             <Save />
          </IconButton>
-         <IconButton aria-label="close" onClick={handleModalClose}>
+         <IconButton aria-label="close" onClick={closeTaskModal}>
             <Close />
          </IconButton>
       </ModalWrapper>

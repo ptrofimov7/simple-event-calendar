@@ -11,71 +11,17 @@ import TaskModal from "../Tasks/TaskModal";
 import CalendarActions from "./CalendarActions";
 import Holidays from "./Holidays";
 import TaskLabelModal from "../Tasks/TaskLabelModal";
-import useCalendar from "../../hooks/useCalendar";
+import { useCalendarContext } from "../../context";
 
 export default function Calendar() {
-   const {
-      isLoading,
-      isError,
-      currentDate,
-      labels,
-      filterLabels,
-      search,
-      refCalendar,
-      tasksWithLabels,
-      sortedDays,
-      modalTaskData,
-      modalLabelData,
-      holidays,
-      showTaskModal,
-      showLabelModal,
-      updateFilterLabels,
-      setSearch,
-      drag,
-      drop,
-      onDragEnter,
-      onDragEnterSameDate,
-      updateTask,
-      deleteTask,
-      updateLabel,
-      deleteLabel,
-      openLabelModal,
-      openNewTaskModal,
-      closeLabelModal,
-      closeTaskModal,
-      openExistedTaskModal,
-      moveToPrevMonth,
-      moveToNextMonth,
-      saveSettingInFile,
-      saveCalendarAsImage,
-      loadSettingsFromFile,
-   } = useCalendar()
-
-   if (isLoading) {
-      return <div>Loading ...</div>
-   }
-
-   if (isError) {
-      return <div>Something went wrong</div>
-   }
+   const { refCalendar, sortedDays, currentDate, showTaskModal, showLabelModal } = useCalendarContext()
 
    return (
       <Wrapper ref={refCalendar}>
          <CalendarHeader
-            currentDate={currentDate} handleClickPrevMonth={moveToPrevMonth}
-            handleClickNextMonth={moveToNextMonth}
+            currentDate={currentDate}
          />
-         <CalendarActions
-            labels={labels}
-            filterLabels={filterLabels}
-            search={search}
-            onSearch={setSearch}
-            onAddLabel={openLabelModal}
-            updateFilterLabels={updateFilterLabels}
-            saveSettingInFile={saveSettingInFile}
-            loadSettingsFromFile={loadSettingsFromFile}
-            saveCalendarAsImage={saveCalendarAsImage}
-         />
+         <CalendarActions />
          <SevenColGrid>
             {DAYS.map((day) => (
                <HeadDays key={day} className="nonDRAG">{day}</HeadDays>
@@ -85,7 +31,7 @@ export default function Calendar() {
             fullheight={true}
             rows={Math.ceil(sortedDays.length / 7)}
          >
-            {sortedDays.map((day, index) => {
+            {sortedDays.map((day: number, index: number) => {
                const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
                const id = `${currentDate.getFullYear()}/${currentDate.getMonth()}/${day}/${index}`
                return (
@@ -93,39 +39,22 @@ export default function Calendar() {
                      key={id}
                      id={id}
                      date={date}
-                     onDragEnter={onDragEnter}
-                     onAddTask={openNewTaskModal}
-                     onDragEnd={drop}>
+                  >
                      <Tasks
-                        tasks={tasksWithLabels}
                         date={date}
-                        onDrag={drag}
-                        onDragEnter={onDragEnterSameDate}
-                        onDragEnd={drop}
-                        onClick={openExistedTaskModal}
-                        onEditLabel={openLabelModal}
                      />
-                     <Holidays date={date} data={holidays} />
+                     <Holidays
+                        date={date}
+                     />
                   </CalendarDay>
                )
             })}
          </SevenColGrid>
          {showTaskModal && (
-            <TaskModal
-               labels={labels}
-               handleUpdate={updateTask}
-               taskData={modalTaskData}
-               handleDelete={deleteTask}
-               handleModalClose={closeTaskModal}
-            />
+            <TaskModal />
          )}
          {showLabelModal && (
-            <TaskLabelModal
-               label={modalLabelData}
-               handleUpdate={updateLabel}
-               handleDelete={deleteLabel}
-               handleModalClose={closeLabelModal}
-            />
+            <TaskLabelModal />
          )}
       </Wrapper>
    );

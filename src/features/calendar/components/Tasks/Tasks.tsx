@@ -1,32 +1,33 @@
 import React, { ReactNode } from "react";
+import { useCalendarContext } from "../../context";
 import { datesAreOnSameDay } from "../../helpers";
 import { SeeMore, StyledTask } from "../../styles/Calendar.styled";
-import { ILabel, ITask } from "../../types";
+import { ITask } from "../../types";
 import TaskLabels from "./TaskLabels";
 
 interface TasksProps {
-   tasks: ITask[],
    date: Date,
-   onDrag: (index: number, date: Date, e: React.DragEvent) => void,
-   onDragEnter: (index: number, date: Date, e: React.DragEvent) => void,
-   onDragEnd: (e: React.DragEvent) => void,
-   onClick: (task: ITask) => void,
-   onEditLabel: (label: ILabel | undefined) => void,
 }
 
-const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLabel }: TasksProps) => {
+const Tasks = ({ date }: TasksProps) => {
+   const { tasksWithLabels,
+   drag,
+   onDragEnterSameDate,
+   drop,
+   openExistedTaskModal,
+   openLabelModal,} =useCalendarContext()
    return (
       <TaskWrapper>
-         {tasks.map(
+         {tasksWithLabels.map(
             (task: ITask, index: number) => {
                return datesAreOnSameDay(task.date, date) && (
                   <StyledTask
-                     onDragStart={(e: React.DragEvent) => onDrag(index, date, e)}
-                     onDragEnter={(e: React.DragEvent) => onDragEnter(index, date, e)}
-                     onDragEnd={onDragEnd}
+                     onDragStart={(e: React.DragEvent) => drag(index, date, e)}
+                     onDragEnter={(e: React.DragEvent) => onDragEnterSameDate(index, date, e)}
+                     onDragEnd={drop}
                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation()
-                        onClick(task)
+                        openExistedTaskModal(task)
                      }}
                      draggable
                      className="StyledTask"
@@ -35,7 +36,7 @@ const Tasks = ({ tasks, date, onDrag, onDragEnter, onDragEnd, onClick, onEditLab
                      bgColor={task.color}
                   >
                      <p>{task.title}</p>
-                     <TaskLabels labels={task.labels} onEdit={onEditLabel} />
+                     <TaskLabels labels={task.labels} onEdit={openLabelModal} />
                   </StyledTask>
                )
             }

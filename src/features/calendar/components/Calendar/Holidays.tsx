@@ -1,17 +1,26 @@
+import { useCalendarContext } from '../../context';
 import { HOLIDAY_COLOR_DEFAULT } from '../../data';
 import { datesAreOnSameDay } from '../../helpers';
 import { StyledHoliday } from '../../styles/Calendar.styled';
 import { IHoliday } from '../../types';
 
 interface HolidaysProps {
-   date: Date,
-   data: IHoliday[]
+   date: Date
 }
 
-const Holidays = ({ date, data }: HolidaysProps) => {
+const Holidays = ({ date }: HolidaysProps) => {
+   const {isLoading, isError, holidays} = useCalendarContext()
+
+   if (isLoading) {
+      return <div>Loading ...</div>
+   }
+
+   if (isError) {
+      return <div>Holidays error!</div>
+   }
    return (
       <>
-         {data.map(
+         {holidays.map(
             (holiday: IHoliday, index: number) =>
                datesAreOnSameDay(holiday.date, date) && (
                   <StyledHoliday

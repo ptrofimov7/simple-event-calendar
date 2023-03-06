@@ -1,20 +1,19 @@
 import { Close, Delete, Save } from '@mui/icons-material';
 import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import React, { useState } from 'react';
+import { useCalendarContext } from '../../context';
 import { LABEL_COLORS } from '../../data';
 import { ModalWrapper } from '../../styles/Calendar.styled';
-import { ILabel } from '../../types';
 
-interface TasklabelModalProps {
-   label: ILabel,
-   handleUpdate: (label: ILabel) => void,
-   handleDelete: (id: string) => void,
-   handleModalClose: () => void
-}
-
-const TaskLabelModal = ({ label, handleUpdate, handleDelete, handleModalClose }: TasklabelModalProps) => {
-   const [color, setColor] = useState(label?.color || '')
-   const [title, setTitle] = useState(label?.title || '')
+const TaskLabelModal = () => {
+   const {
+      modalLabelData,
+      updateLabel,
+      deleteLabel,
+      closeLabelModal,
+   } = useCalendarContext()
+   const [color, setColor] = useState(modalLabelData?.color || '')
+   const [title, setTitle] = useState(modalLabelData?.title || '')
    return (
       <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
          <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: any) => setTitle(e.target.value)} />
@@ -38,18 +37,18 @@ const TaskLabelModal = ({ label, handleUpdate, handleDelete, handleModalClose }:
                alert('Title and color are required!')
                return
             }
-            handleUpdate({ id: label?.id, color, title })
+            updateLabel({ id: modalLabelData?.id, color, title })
          }}>
             <Save />
          </IconButton>
-         {label?.id && <IconButton aria-label="trash" onClick={(e: React.MouseEvent) => {
+         {modalLabelData?.id && <IconButton aria-label="trash" onClick={(e: React.MouseEvent) => {
             e.stopPropagation()
-            handleDelete(label.id)
+            deleteLabel(modalLabelData.id)
          }}>
             <Delete />
          </IconButton>
          }
-         <IconButton aria-label="close" onClick={handleModalClose}>
+         <IconButton aria-label="close" onClick={closeLabelModal}>
             <Close />
          </IconButton>
       </ModalWrapper>

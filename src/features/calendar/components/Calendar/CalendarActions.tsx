@@ -1,24 +1,19 @@
 import { Box, Button, TextField } from '@mui/material';
 import { useRef } from 'react';
-import { ILabel } from '../../types';
+import { useCalendarContext } from '../../context';
 import TaskLabel from '../Tasks/TaskLabel';
 
-
-interface CalendarActionsProps {
-   search: string,
-   labels: ILabel[],
-   filterLabels:ILabel[],
-   onSearch: (value: string) => void,
-   onAddLabel: (label?: ILabel) => void,
-   updateFilterLabels: (labels: ILabel[]) => void,
-   saveSettingInFile: () => void,
-   loadSettingsFromFile: (file: File) => void,
-   saveCalendarAsImage: () => void
-}
-
-const CalendarActions = ({
-   search, labels, filterLabels, onSearch, onAddLabel, updateFilterLabels,
-   saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage }: CalendarActionsProps) => {
+const CalendarActions = () => {
+   const {
+      labels,
+      filterLabels,
+      search,
+      setSearch,
+      openLabelModal,
+      updateFilterLabels,
+      saveSettingInFile,
+      loadSettingsFromFile,
+      saveCalendarAsImage } = useCalendarContext()
 
    const uploadInputRef = useRef<HTMLInputElement>(null)
 
@@ -35,19 +30,19 @@ const CalendarActions = ({
          alignItems: 'center'
       }}>
          <TextField
-            sx={{minWidth: 50}}
+            sx={{ minWidth: 50 }}
             id="Outlined-search"
             label="Search field"
             type="search"
             variant="outlined"
             value={search}
             onChange={(e) => {
-               onSearch(e.target.value)
+               setSearch(e.target.value)
             }
             }
          />
          <TaskLabel labels={labels} taskLabels={filterLabels} onChange={updateFilterLabels} />
-         <Button onClick={() => onAddLabel()}>Create label</Button>
+         <Button onClick={() => openLabelModal()}>Create label</Button>
          <input
             color="primary"
             accept=".txt"
