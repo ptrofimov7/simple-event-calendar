@@ -4,14 +4,14 @@ import { ILabel, ITaskState } from "../types";
 
 // TODO: complete reducers
 
-enum TASKS_ACTIONS {
-   FETCH = 'FETCH',
-   ADD = 'ADD',
-   UPDATE = 'UPDATE',
-   DELETE = 'DELETE',
+const enum TASKS_ACTIONS {
+   FETCH,
+   ADD,
+   UPDATE,
+   DELETE,
 }
 
-export const taskReducer = (state: ITaskState[], action: { type: keyof TASKS_ACTIONS, payload: any }) => {
+export const taskReducer = (state: ITaskState[], action: { type: TASKS_ACTIONS, payload: any }) => {
    switch (action.type) {
       case TASKS_ACTIONS.FETCH: {
          return state;
@@ -31,21 +31,21 @@ export const taskReducer = (state: ITaskState[], action: { type: keyof TASKS_ACT
 }
 
 
-enum LABEL_ACTIONS {
+const enum LABEL_ACTIONS {
    ADD = 'ADD',
    UPDATE = 'UPDATE',
    DELETE = 'DELETE',
 }
 
-export const labelReducer = (state: ILabel[], action: { type: keyof LABEL_ACTIONS, payload: any }) => {
+export const labelReducer = (state: ILabel[], action: { type: LABEL_ACTIONS, payload: any }) => {
    switch (action.type) {
-      case TASKS_ACTIONS.ADD: {
+      case LABEL_ACTIONS.ADD: {
          return state;
       }
-      case TASKS_ACTIONS.UPDATE: {
+      case LABEL_ACTIONS.UPDATE: {
          return state;
       }
-      case TASKS_ACTIONS.DELETE: {
+      case LABEL_ACTIONS.DELETE: {
          return state;
       }
       default:
@@ -53,11 +53,11 @@ export const labelReducer = (state: ILabel[], action: { type: keyof LABEL_ACTION
    }
 }
 
-enum CALENDAR_ACTIONS {
-   PREV_MONTH = 'PREVMONTH',
-   NEXT_MONTH = 'UPDATE',
-   SET_SEARCH = 'SET_SEARCH',
-   SET_FILTER_LABELS = 'SET_FILTER_LABELS'
+const enum CALENDAR_ACTIONS {
+   PREV_MONTH,
+   NEXT_MONTH,
+   SET_SEARCH,
+   SET_FILTER_LABELS
 }
 
 type ICalendarState = {
@@ -66,7 +66,7 @@ type ICalendarState = {
    filterLabels: ILabel['id'][]
 }
 
-export const calendarReducer = (state: ICalendarState, action: { type: keyof CALENDAR_ACTIONS, payload: any }) => {
+export const calendarReducer = (state: ICalendarState, action: { type: CALENDAR_ACTIONS, payload: any }) => {
    switch (action.type) {
       case CALENDAR_ACTIONS.PREV_MONTH: {
          return state;
