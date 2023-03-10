@@ -1,14 +1,8 @@
 import html2canvas from "html2canvas";
 import { useRef } from "react";
+import { ISettings } from "../types";
 
-type Settings = {
-    tasks: any
-    labels: any
-    currentDate: any
-    filterLabels: any
-}
-
-export default function useSettings(data: Settings, cb: (settings: Settings) => void) {
+export default function useSettings(data: ISettings, cb: (settings: ISettings) => void) {
    const refCalendar = useRef<HTMLElement>(null)
 
    const saveSettingInFile = () => {
@@ -28,10 +22,6 @@ export default function useSettings(data: Settings, cb: (settings: Settings) => 
          try {
             const settings = JSON.parse(e.target.result)
             cb(settings)
-            // setCurrentDate(settings?.currentDate ? new Date(settings.currentDate) : new Date())
-            // setTasks(settings?.tasks.map((task: any) => ({ ...task, date: new Date(task.date) })) || [])
-            // setLabels(settings?.labels || [])
-            // setFilterLabelsId(settings?.filterLabels || [])
          } catch (error) {
             console.log(error);
          }

@@ -1,5 +1,5 @@
 import { getSortedDays } from "../helpers";
-import { ILabel, ITask } from "../types";
+import { ILabel, ISettings, ITask, ITaskState } from "../types";
 import useCalendarFilters from "./useCalendarFilters";
 import useHolidays from "./useHolidays";
 import useLabels from "./useLabels";
@@ -49,9 +49,9 @@ export default function useCalendar() {
 
    const {
       refCalendar, saveSettingInFile, loadSettingsFromFile, saveCalendarAsImage
-   } = useSettings({ tasks, labels, currentDate, filterLabels: filterLabelsId }, (settings: any) => {
+   } = useSettings({ tasks, labels, currentDate, filterLabels: filterLabelsId }, (settings: ISettings) => {
       setCurrentDate(settings?.currentDate ? new Date(settings.currentDate) : new Date())
-      setTasks(settings?.tasks.map((task: any) => ({ ...task, date: new Date(task.date) })) || [])
+      setTasks(settings?.tasks.map((task: ITaskState) => ({ ...task, date: new Date(task.date) })) || [])
       setLabels(settings?.labels || [])
       setFilterLabelsId(settings?.filterLabels || [])
    })

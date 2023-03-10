@@ -1,35 +1,28 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { ILabel } from "../types";
-import { getUniqId } from "../helpers";
+import { labelInitialState, labelReducer, LABEL_ACTIONS } from "../reducers";
 
 export default function useLabels(cb: (id: string) => void) {
+   const [labels, dispatch] = useReducer(labelReducer, labelInitialState)
    const [showLabelModal, setShowLabelModal] = useState(false);
-   const [labels, setLabels] = useState<ILabel[]>([])
-  const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
+   const [modalLabelData, setModalLabelData] = useState<ILabel>({} as ILabel);
+
+   const setLabels = (labels: ILabel[]) => {
+      dispatch({
+         type: LABEL_ACTIONS.SET_LABELS,
+         payload: labels
+      })
+   }
+
    const updateLabel = (label: ILabel) => {
-      const id = label?.id || getUniqId()
-      setLabels((prev) => {
-         const found = prev.find(element => element.id === id)
-         if (found) {
-            return prev.map(element => {
-               if (element.id === id) {
-                  return {
-                     ...element,
-                     ...label
-                  }
-               }
-               return element
-            })
-         }
-         return [
-            ...prev,
-            { ...label, id }
-         ]
-      });
+      dispatch({
+         type: LABEL_ACTIONS.UPDATE_LABEL,
+         payload: label
+      })
       closeLabelModal()
    };
 
-   const openLabelModal = (label: ILabel | undefined) => {
+   const openLabelModal = (label?: ILabel | undefined) => {
       setShowLabelModal(true);
       setModalLabelData(label ?? {} as ILabel);
    };
@@ -37,9 +30,10 @@ export default function useLabels(cb: (id: string) => void) {
    const closeLabelModal = () => setShowLabelModal(false);
 
    const deleteLabel = (id: string) => {
-      setLabels((prev) =>
-         prev.filter((label) => label.id !== id)
-      );
+      dispatch({
+         type: LABEL_ACTIONS.DELETE_LABEL,
+         payload: id
+      })
       cb(id)
       closeLabelModal();
    };

@@ -85,7 +85,7 @@ export default function useTasks() {
 
    const deleteTask = () => {
       setTasks((prev) =>
-         prev.filter((task) => task.title !== modalTaskData.title)
+         prev.filter((task) => task.id !== modalTaskData.id)
       );
       closeTaskModal();
    };

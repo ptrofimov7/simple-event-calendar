@@ -1,11 +1,12 @@
 
-import React from "react";
+import React, { ReactNode } from "react";
 import useCalendar from "../hooks/useCalendar";
-//TODO: need to implement contexts: TaskContext, LabelContext, CalendarContext
-const CalendarContext = React.createContext<any>({} as any)
 
-export const CalendarContextProvider = (props: any) => {
-  // const [calendar, calendarDispatch] = useReducer(taskReducer, [])
+type ICalendarContext = Omit<ReturnType<typeof useCalendar>, "tasks" | "dragMovedElement" | "dragHoverElement">
+const CalendarContext = React.createContext<ICalendarContext>({} as ICalendarContext)
+
+export const CalendarContextProvider = ({children}: {children: ReactNode}) => {
+
   const {
     isLoading,
     isError,
@@ -41,7 +42,7 @@ export const CalendarContextProvider = (props: any) => {
     saveSettingInFile,
     saveCalendarAsImage,
     loadSettingsFromFile,
- } = useCalendar()
+  } = useCalendar()
 
   return (
     <CalendarContext.Provider value={{
@@ -78,8 +79,9 @@ export const CalendarContextProvider = (props: any) => {
       moveToNextMonth,
       saveSettingInFile,
       saveCalendarAsImage,
-      loadSettingsFromFile} }>
-      {props.children}
+      loadSettingsFromFile
+    }}>
+      {children}
     </CalendarContext.Provider>
   )
 }

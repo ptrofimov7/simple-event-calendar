@@ -26,3 +26,10 @@ export type IHoliday = {
    name: string,
    date: Date,
 }
+
+export type ISettings = {
+   tasks: ITaskState[]
+   labels: ILabel[]
+   currentDate: Date
+   filterLabels: ILabel['id'][]
+}
