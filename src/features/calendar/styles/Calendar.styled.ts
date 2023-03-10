@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<any>`
   height: 99vh;
 `;
 
@@ -29,7 +29,7 @@ export const StyledHoliday = styled.span<{ bgColor: string }>`
   text-transform: capitalize;
 `;
 
-export const SevenColGrid = styled.div<{fullheight: boolean, rows: number}>`
+export const SevenColGrid = styled.div<any>`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   ${(props) => props.fullheight && `height: calc(100% - 136px);`}
