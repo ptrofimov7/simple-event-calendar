@@ -1,6 +1,6 @@
 import { Close, Delete, Save } from '@mui/icons-material';
 import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useCalendarContext } from '../../context';
 import { LABEL_COLORS } from '../../data';
 import { ModalWrapper } from '../../styles/Calendar.styled';
@@ -16,7 +16,7 @@ const TaskLabelModal = () => {
    const [title, setTitle] = useState(modalLabelData?.title || '')
    return (
       <ModalWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-         <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: any) => setTitle(e.target.value)} />
+         <TextField id="outlined-basic" label="Title" variant="outlined" value={title} onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)} />
          <FormControl fullWidth>
             <InputLabel id="color-select-label">Color</InputLabel>
             <Select
